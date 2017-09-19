@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Grades
 {
@@ -20,7 +21,9 @@ namespace Grades
                 _grades.Add(grade);
             }
         }
-        
+
+
+
         public GradeStatistics ComputeStatistics()
         {
             GradeStatistics stats = new GradeStatistics();
@@ -38,6 +41,40 @@ namespace Grades
             return stats;
         }
 
+        public void WriteGrades(TextWriter textWriter)
+        {
+            textWriter.WriteLine("Grades:");
+            //int i = 0;
+            //do
+            //{
+            //    textWriter.WriteLine(_grades[i]);
+            //    i++;
+            //} while (i < _grades.Count);
+
+            //int i = 0;
+            //while (i < _grades.Count)
+            //{
+            //    textWriter.WriteLine(_grades[i]);
+            //    i++;
+            //}
+
+            //for (int i = _grades.Count-1; i >= 0; i--)
+            //{
+            //    textWriter.WriteLine(_grades[i]);
+            //}
+
+            //for (int i = 0; i < _grades.Count; i++)
+            //{
+            //    textWriter.WriteLine(_grades[i]);
+            //}
+
+            foreach (float grade in _grades)
+            {
+                textWriter.WriteLine(grade);
+            }
+            textWriter.WriteLine("*********");
+        }
+
         // fields
         private string _name;
         public string Name
@@ -48,6 +85,11 @@ namespace Grades
             }
             set
             {
+                if(String.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentException("Name cannot be null or empty");
+                }
+
                 if (_name != value)
                 {
                     var oldValue = _name;
