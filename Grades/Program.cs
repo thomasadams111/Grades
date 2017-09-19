@@ -9,83 +9,65 @@ namespace Grades
 {
     class Program
     {
-        static void GiveBookAName(ref GradeBook book)
-        {
-            book = new GradeBook();
-            book.Name = "The New GradeBook";
-        }
-
-        static void IncrememntNumber(ref int number)
-        {
-            number += 1;
-        }
-
         static void Main(string[] args)
         {
+            GradeBook book = new GradeBook("Tom's book"); //Instatiate gradebook class, using constructor.
+            book.AddGrade(91f);
+            book.AddGrade(89.1f);
+            book.AddGrade(75f);
 
-            SpeechSynthesizer synth = new SpeechSynthesizer();
-            synth.Speak("Hello World");
+            GradeStatistics stats = book.ComputeStatistics(); // return statistics object
 
-            Arrays();
-            Immutable();
-            PassByValueAndRef();
+            book.NameChanged += OnNameChanged;
+            book.NameChanged += OnNameChanged;
+            book.NameChanged += OnNameChanged2;
+            book.NameChanged -= OnNameChanged;
 
-            //GradeBook book = new GradeBook(); //Instatiate gradebook class, using constructor.
-            //book.AddGrade(91f);
-            //book.AddGrade(89.1f);
-            //book.AddGrade(75f);
+            book.Name = "Allen's book";
+            WriteNames(book.Name);
 
-            //GradeStatistics stats = book.ComputeStatistics(); // return statistics object
-            //Console.WriteLine($"Average grade: {stats.AverageGrade}");
-            //Console.WriteLine($"Highest grade: {stats.HighestGrade}");
-            //Console.WriteLine($"Lowest grade: {stats.LowestGrade}");
+            Console.WriteLine($"Average grade: {stats.AverageGrade}");
+            Console.WriteLine($"Highest grade: {stats.HighestGrade}");
+            Console.WriteLine($"Lowest grade: {stats.LowestGrade}");
         }
 
-        private static void Arrays()
+        private static void OnNameChanged2(object sender, NameChangedEventArgs args)
         {
-            float[] grades;
-            grades = new float[3];
+            Console.WriteLine("***");
+        }
 
-            AddGrades(grades);
+        private static void OnNameChanged(object sender, NameChangedEventArgs args)
+        {
+            Console.WriteLine($"Name changed from {args.OldValue} to {args.NewValue}");
+        }
 
-            foreach (float grade in grades)
+        private static void WriteBytes(int value)
+        {
+            byte[] bytes = BitConverter.GetBytes(value);
+            WriteByteArray(bytes);
+        }
+
+        private static void WriteBytes(float value)
+        {
+            byte[] bytes = BitConverter.GetBytes(value);
+            WriteByteArray(bytes);
+        }
+
+        private static void WriteByteArray(byte[] bytes)
+        {
+            foreach (byte b in bytes)
             {
-                Console.WriteLine(grade);
+                Console.Write($"0x{b:X} ");
             }
+            Console.WriteLine();
         }
 
-        private static void AddGrades(float[] grades)
+        private static void WriteNames(params string[] names)
         {
-            if (grades.Length >= 3)
+            foreach (string name in names)
             {
-                grades[0] = 91f;
-                grades[1] = 89.1f;
-                grades[2] = 75f;
+                Console.WriteLine(name);
             }
-        }
-
-        private static void Immutable()
-        {
-            string name = " Scott ";
-            name = name.Trim();
-            DateTime date = new DateTime(2014, 01, 01);
-            date = date.AddHours(25);
-
-            Console.WriteLine(name);
-            Console.WriteLine(date);
-        }
-
-        private static void PassByValueAndRef()
-        {
-            GradeBook g1 = new GradeBook();
-            GradeBook g2 = g1;
-
-            GiveBookAName(ref g2);
-            Console.WriteLine(g2.Name);
-
-            int x1 = 10;
-            IncrememntNumber(ref x1);
-            Console.WriteLine(x1);
         }
     }
 }
