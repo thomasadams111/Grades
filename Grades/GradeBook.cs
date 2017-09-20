@@ -1,20 +1,22 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Grades
 {
-    public class GradeBook
+    public class GradeBook : GradeTracker
     {
         // constructors
         public GradeBook(string name = "No Name")
         {
+            Console.WriteLine("Grade Book ctor");
             Name = name;
             _grades = new List<float>();
         }
 
         // methods
-        public void AddGrade(float grade)
+        public override void AddGrade(float grade)
         {
             if (grade >= 0 && grade <= 100 )
             {
@@ -22,10 +24,16 @@ namespace Grades
             }
         }
 
-
-
-        public GradeStatistics ComputeStatistics()
+        public override IEnumerator GetEnumerator()
         {
+            Console.WriteLine("Print using Interface");
+            return _grades.GetEnumerator();
+        }
+
+        public override GradeStatistics ComputeStatistics()
+        {
+            Console.WriteLine("GradeBook Compute");
+
             GradeStatistics stats = new GradeStatistics();
 
             float sum = 0f;
@@ -41,7 +49,7 @@ namespace Grades
             return stats;
         }
 
-        public void WriteGrades(TextWriter textWriter)
+        public override void WriteGrades(TextWriter textWriter)
         {
             textWriter.WriteLine("Grades:");
             //int i = 0;
@@ -76,37 +84,6 @@ namespace Grades
         }
 
         // fields
-        private string _name;
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                if(String.IsNullOrEmpty(value))
-                {
-                    throw new ArgumentException("Name cannot be null or empty");
-                }
-
-                if (_name != value)
-                {
-                    var oldValue = _name;
-                    _name = value;
-                    if (NameChanged != null) // Check for at least 1 subscriber
-                    {
-                        NameChangedEventArgs args = new NameChangedEventArgs();
-                        args.OldValue = oldValue;
-                        args.NewValue = value;
-                        NameChanged(this, args);
-                    }
-                }
-            }
-        }
-
-        public event NameChangedDelegate NameChanged; // Delegate variable, need subscribers
-        
-        private List<float> _grades;
+        protected List<float> _grades;
     }
 }

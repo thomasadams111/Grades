@@ -12,7 +12,7 @@ namespace Grades
     {
         static void Main(string[] args)
         {
-            GradeBook book = new GradeBook("Tom's book"); //Instatiate gradebook class, using constructor.
+            IGradeTracker book = CreateGradeBook();
 
             book.NameChanged += OnNameChanged;
             book.NameChanged += OnNameChanged2;
@@ -39,25 +39,30 @@ namespace Grades
                     //}
                 }
             }
-            catch (FileNotFoundException ex)
+            catch (FileNotFoundException)
             {
                 Console.WriteLine("Could not locate the file grades.txt");
                 return;
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
                 Console.WriteLine("No access");
                 return;
             }
 
+            book.DoSomething();
             book.WriteGrades(Console.Out);
+            foreach (float grade in book)
+            {
+                Console.WriteLine(grade);
+            }
 
             try
             {
-                Console.WriteLine("Please enter a name for the book");
-                book.Name = Console.ReadLine();
+                //Console.WriteLine("Please enter a name for the book");
+                //book.Name = Console.ReadLine();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 Console.WriteLine("Invalid Name");
             }
@@ -70,6 +75,13 @@ namespace Grades
             Console.WriteLine($"Highest grade: {stats.HighestGrade}");
             Console.WriteLine($"Lowest grade: {stats.LowestGrade}");
             Console.WriteLine($"{stats.LetterGrade} {stats.Description}");
+        }
+
+        private static IGradeTracker CreateGradeBook()
+        {
+            //Instatiate gradebook class, using constructor.
+            IGradeTracker book = new ThrowAwayGradeBook("Tom's Gradebook");
+            return book;
         }
 
         private static void OnNameChanged2(object sender, NameChangedEventArgs args)
